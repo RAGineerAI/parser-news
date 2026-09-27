@@ -49,16 +49,31 @@ def parse_quote(quote_element) -> Dict:
     Returns:
         Словарь: {"text": ..., "author": ..., "tags": [...]}
     """
-    text = quote_element.find("span", class_="text").text.strip()
-    author = quote_element.find("small", class_="author").text.strip()
+    """text = quote_element.find("span", class_="text").text.strip()"""
+    author = quote_element.find("a", class_="tm-user-info__username").text.strip()
+    title = quote_element.find("a", class_="tm-title__link").text.strip()
+    counter_element = quote_element.find("span", class_="tm-icon-counter__value")
+    if counter_element:
+        counter = counter_element.text.strip()
+    else:
+        counter = ""
+    time = quote_element.find("a", class_="tm-article-datetime-published tm-article-datetime-published_link").text.strip()
 
+
+
+    """
     tags_elements = quote_element.find_all("a", class_="tag")
     tags = [t.text.strip() for t in tags_elements]
+    """
 
     return {
-        "text": text,
+    
         "author": author,
-        "tags": tags,
+        
+        "title": title,
+        "counter": counter,
+        "time": time,
+
     }
 
 def parse_page(url: str) -> List[Dict]:
@@ -74,7 +89,7 @@ def parse_page(url: str) -> List[Dict]:
     html = fetch_page(url)
     soup = BeautifulSoup(html, "lxml")
 
-    quote_elements = soup.find_all("div", class_="quote")
+    quote_elements = soup.find_all("article", class_="tm-articles-list__item")
 
     quotes = []
     for quote_element in quote_elements:
@@ -100,13 +115,9 @@ def save_csv(quotes: List[Dict], filename: str = "quotes.csv") -> None:
     filepath = Path(OUTPUT_DIR) / filename
 
     with open(filepath, "w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["text", "author", "tags"])
+        writer = csv.DictWriter(f, fieldnames=[ "author", "title", "counter", "time" ])
         writer.writeheader()
 
-        for quote in quotes:
-            row = quote.copy()
-            row["tags"] = ", ".join(row["tags"])  # список → строка
-            writer.writerow(row)
 
     print(f"💾 CSV сохранён: {filepath}")
 
@@ -127,8 +138,8 @@ def main():
     print("\n📊 Первые 3 цитаты:")
     for i, quote in enumerate(quotes[:3], start=1):
         print(f"\n  {i}. {quote['author']}")
-        print(f"     {quote['text'][:80]}...")
-        print(f"     Теги: {', '.join(quote['tags'])}")
+        
+
 
 
 if __name__ == "__main__":

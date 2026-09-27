@@ -5,13 +5,13 @@
 """
 
 # URL сайта для парсинга
-BASE_URL = "http://quotes.toscrape.com/"
+BASE_URL = "https://habr.com/ru/articles/"
 
 # Путь для сохранения результатов
 OUTPUT_DIR = "output"
 
 # Задержка между запросами (сек) — вежливость к серверу
-REQUEST_DELAY = 1.0
+REQUEST_DELAY = 10.0
 
 # User-Agent — представляемся браузером
 USER_AGENT = (
