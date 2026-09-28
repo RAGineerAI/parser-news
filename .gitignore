@@ -4,5 +4,6 @@ __pycache__/
 .env
 output/*.json
 output/*.csv
+*.log
 .DS_Store
 .vscode/

@@ -1,3 +1,8 @@
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from core.fetcher import fetch_page
 from core.config_loader import load_site_config
 from core.extractor import extract_all

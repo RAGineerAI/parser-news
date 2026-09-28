@@ -13,3 +13,18 @@
 2026-09-28 20:35:48 | INFO     | __main__ | Сохранено: output/habr.json
 2026-09-28 20:35:48 | INFO     | __main__ | Сохранено: output/habr.csv
 2026-09-28 20:35:48 | INFO     | __main__ | Итог: 1/1 сайтов обработано
+2026-09-28 20:37:46 | INFO     | __main__ | Сайтов к обработке: 1 → habr
+2026-09-28 20:37:46 | INFO     | __main__ | Обработка сайта: habr
+2026-09-28 20:37:46 | INFO     | core.config_loader | Загружен конфиг: sites/habr.yaml
+2026-09-28 20:37:46 | INFO     | core.fetcher | Загрузка: https://habr.com/ru/articles/
+2026-09-28 20:37:46 | DEBUG    | urllib3.connectionpool | Starting new HTTPS connection (1): habr.com:443
+2026-09-28 20:37:46 | DEBUG    | urllib3.connectionpool | https://habr.com:443 "GET /ru/articles/ HTTP/1.1" 200 None
+2026-09-28 20:37:56 | INFO     | core.fetcher | Успешно загружено: 284381 символов
+2026-09-28 20:37:56 | INFO     | __main__ | Загружено 284381 символов
+2026-09-28 20:37:56 | INFO     | core.extractor | Найдено элементов: 20
+2026-09-28 20:37:56 | INFO     | __main__ | Извлечено записей: 20
+2026-09-28 20:37:56 | INFO     | core.exporter | JSON сохранён: output/habr.json (20 записей)
+2026-09-28 20:37:56 | INFO     | core.exporter | CSV сохранён: output/habr.csv (20 записей)
+2026-09-28 20:37:56 | INFO     | __main__ | Сохранено: output/habr.json
+2026-09-28 20:37:56 | INFO     | __main__ | Сохранено: output/habr.csv
+2026-09-28 20:37:56 | INFO     | __main__ | Итог: 1/1 сайтов обработано
