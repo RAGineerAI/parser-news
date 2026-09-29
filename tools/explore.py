@@ -60,11 +60,9 @@ def explore_tags(soup: BeautifulSoup, top_n: int = 20) -> None:
     containers = []
 
     for tag in soup.find_all():
-        # Только теги-контейнеры
         if tag.name not in CONTAINER_TAGS:
             continue
 
-        # Только теги с классом
         classes = tag.get("class")
         if not classes:
             continue
@@ -74,16 +72,21 @@ def explore_tags(soup: BeautifulSoup, top_n: int = 20) -> None:
 
         count = len(soup.select(selector))
 
-        # Отбираем «золотую середину»
         if 5 <= count <= 100:
-            containers.append((selector, count))
+            # 🆕 Размер элемента
+            size = len(str(tag))
+            containers.append((selector, count, size))
 
-    # Убираем дубликаты, сортируем
-    unique_containers = dict(containers)
+    # Убираем дубликаты (берём первый)
+    unique_containers = {}
+    for selector, count, size in containers:
+        if selector not in unique_containers:
+            unique_containers[selector] = (count, size)
 
+    # Сортируем по размеру (по убыванию)
     sorted_containers = sorted(
         unique_containers.items(),
-        key=lambda x: x[1],
+        key=lambda x: x[1][1],
         reverse=True
     )
 
@@ -91,10 +94,10 @@ def explore_tags(soup: BeautifulSoup, top_n: int = 20) -> None:
         print("Не найдено подозрительных контейнеров")
         return
 
-    print(f"{'Селектор':<50} {'Количество':>12}")
-    print("-" * 65)
-    for selector, count in sorted_containers[:15]:
-        print(f"{selector:<50} {count:>12}")
+    print(f"{'Селектор':<50} {'Кол-во':>8} {'Размер':>10}")
+    print("-" * 70)
+    for selector, (count, size) in sorted_containers[:15]:
+        print(f"{selector:<50} {count:>8} {size:>10}")
 
 
 def explore_element(soup: BeautifulSoup, tag_name: str, limit: int = 1) -> None:
