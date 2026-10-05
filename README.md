@@ -1,106 +1,121 @@
-# 🕷️ Parser Basic
+# 🕷️ Parser News
 
 [![Status](https://img.shields.io/badge/status-MVP_completed-blue.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.12-green.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow)]()
 
-Простой парсер HTML-страниц на Python (requests + BeautifulSoup).
+Многосайтовый парсер на Python. Собирает данные с HTML-страниц и сохраняет в JSON + CSV.
 
-**Проект 2.6 — шаблон для быстрой адаптации под задачи парсинга **
-## 🎯 Что решает
+**Ключевая идея:** код — движок, конфиг — задача. Для нового сайта не нужно менять код — только YAML.
 
-Собирает данные с HTML-страниц и сохраняет в **JSON** и **CSV**.
+## 🎯 Что умеет
 
-Подходит для:
-- Парсинга новостей, статей, каталогов
-- Сбора цен, отзывов, объявлений
-- Любых статичных сайтов (без JS)
-
-## 🛠️ Стек
-
-| Компонент | Технология |
-|-----------|------------|
-| **HTTP-запросы** | requests |
-| **Парсинг HTML** | BeautifulSoup + lxml |
-| **Сохранение** | JSON, CSV |
-| **Язык** | Python 3.12 |
+- ✅ Парсинг HTML-страниц (статьи, товары, цитаты, каталоги)
+- ✅ Работа через YAML-конфиги (новый сайт за 15 минут)
+- ✅ Выгрузка в JSON и CSV
+- ✅ Разведка HTML (`tools/explore.py`)
+- ✅ Логирование (консоль + файл)
 
 ## 🚀 Быстрый старт
 
-### Установка
-
 ```bash
-# 1. Клонировать репозиторий
-git clone https://github.com/RAGineerAI/parser-basic.git
-cd parser-basic
+# 1. Клонировать
+git clone https://github.com/RAGineerAI/parser-news.git
+cd parser-news
 
-# 2. Создать окружение
+# 2. Окружение
 python3 -m venv venv
 source venv/bin/activate
-
-# 3. Установить зависимости
 pip install -r requirements.txt
 
-# 4. Запустить парсер
-python parser.py
+# 3. Запустить парсер
+python main.py --site habr
 ```
+**Результат:** `output/habr.json` и `output/habr.csv`
+## 📊 Пример
 
----
+**Команда:**
+
+```bash
+python main.py --site habr
+```
+**Вывод:**
+
+```text
+🌐 Загружаем: https://habr.com/ru/articles/
+📥 Загружено: 250000 символов
+✅ Извлечено записей: 20
+💾 JSON сохранён: output/habr.json
+💾 CSV сохранён: output/habr.csv
+✅ Итог: 1/1 сайтов обработано
+```
+**Файл `output/habr.csv`:**
+
+```csv
+title,link,author,counter,datetime
+"Теория возможностей...","/ru/articles/1087094/","Ir1na","1.7K","2026-09-27T10:24:13.000Z"
+...
+```
+## 🏗️ Архитектура
+
+```text
+
+main.py → process_site() → fetcher → extractor → exporter
+                              ↓         ↓          ↓
+                           HTML     данные    JSON+CSV
+```
+**Подробно:** [docs/ARCHITECTURE.md](https://docs/ARCHITECTURE.md)
 ## 📁 Структура проекта
 
-parser-basic/  
-├── parser.py # Основная логика парсера  
-├── config.py # Настройки (URL, задержки)  
-├── requirements.txt # Зависимости  
-└── output/ # Результаты (JSON, CSV)
-
-
-## 🎯 Как адаптировать под новую задачу
-
-Парсер легко переделать под любой сайт. Нужно изменить **3 вещи**:
-
-
-## 🎯 Как адаптировать под новую задачу
-
-Парсер легко переделать под любой сайт. Нужно изменить **3 вещи**:
-
-### 1. URL сайта
-
-В `config.py`:
-```python
-BASE_URL = "https://нужный-сайт.com/"
+```text
+parser-news/
+├── main.py                  # CLI, оркестратор
+├── core/                    # Движок
+│   ├── fetcher.py           # Загрузка HTML
+│   ├── config_loader.py     # Чтение YAML
+│   ├── extractor.py         # Извлечение данных
+│   └── exporter.py          # JSON + CSV
+├── sites/                   # Конфиги сайтов
+│   └── habr.yaml
+├── tools/
+│   └── explore.py           # Разведка HTML
+├── tests/                   # Тесты
+├── docs/                    # Документация
+└── output/                  # Результаты
 ```
-### 2. Селекторы (что искать)
+## 📖 Документация
 
-В `parser.py` → `parse_page()`:
+|Документ|Что внутри|
+|---|---|
+|[ARCHITECTURE.md](https://docs/ARCHITECTURE.md)|Как устроен проект|
+|[HOW_TO_ADD_SITE.md](https://docs/HOW_TO_ADD_SITE.md)|Как добавить новый сайт|
+|[CLI_REFERENCE.md](https://docs/CLI_REFERENCE.md)|Справочник команд|
 
-# Было:
+## 🔧 Как добавить новый сайт
+
+**3 шага:**
 ```bash
-quote_elements = soup.find_all("div", class_="quote")
-# Стало (пример):
-quote_elements = soup.find_all("article", class_="post")
+
+# 1. Разведка
+python tools/explore.py https://новый-сайт.com/ --delay 5
+# 2. Создать YAML
+cp sites/habr.yaml sites/новый-сайт.yaml
+nano sites/новый-сайт.yaml
+# 3. Тест
+python main.py --site новый-сайт
 ```
-### 3. Поля (что извлекать)
+**Код не трогаем.**
+## 🛠️ Стек
 
-В `parser.py` → `parse_quote()`:
-```bash
-return {
-    "title": ...,
-    "price": ...,
-    "description": ...,
-}
-```
-## 🔧 Что внутри
-
-- ✅ Вежливые паузы между запросами
-    
-- ✅ User-Agent (притворяется браузером)
-    
-- ✅ Обработка ошибок HTTP
-    
-- ✅ Сохранение в JSON и CSV
-    
-
+| Компонент    | Технология           |
+| ------------ | -------------------- |
+| Язык         | Python 3.12          |
+| HTTP         | requests             |
+| Парсинг HTML | BeautifulSoup + lxml |
+| Конфиги      | PyYAML               |
+| CLI          | argparse             |
+| Логирование  | logging              |
+| Данные       | json, csv            |
 ## 👤 Автор
 
 **RAGineerAI** — [GitHub](https://github.com/RAGineerAI)
